@@ -17,28 +17,31 @@ def baum_sweet(num: int):
         return 1
 
 
-def baum_sweet_generator(stop: int):
-    if stop < 0:
+def baum_sweet_generator(stop: int, start: int = 0):
+    if stop < 0 or start < 0:
         raise ValueError("Number has to be greater or equal to 0")
+    elif start > stop:
+        raise ValueError("Start has to be after stop")
 
-    yield 1
-    for val in range(1, stop + 1):
+    for val in range(start, stop + 1):
         yield baum_sweet(val)
 
 
-def baum_sweet_sequence(stop: int):
-    if stop < 0:
+def baum_sweet_sequence(stop: int, start: int = 0):
+    if stop < 0 or start < 0:
         raise ValueError("Number has to be greater or equal to 0")
-    result = [1]
-    for val in range(1, stop + 1):
-        result.append(baum_sweet(val))
-    return result
+    elif start > stop:
+        raise ValueError("Start has to be after stop")
+
+    return [baum_sweet(val) for val in range(start, stop + 1)]
 
 
-def baum_sweet_sequence_by_generator(stop: int):
-    if stop < 0:
+def baum_sweet_sequence_by_generator(stop: int, start: int = 0):
+    if stop < 0 or start < 0:
         raise ValueError("Number has to be greater or equal to 0")
-    return [val for val in baum_sweet_generator(stop)]
+    elif start > stop:
+        raise ValueError("Start has to be after stop")
+    return [val for val in baum_sweet_generator(stop, start)]
 
 
 if __name__ == '__main__':
@@ -49,15 +52,16 @@ if __name__ == '__main__':
         "Generator": 0,
     }
     time_start = time.time()
-    list_seq = baum_sweet_sequence(stop_value)
+    list_seq = baum_sweet_sequence(stop_value, start_value)
     time_table["List"] = time.time() - time_start
 
     time_start = time.time()
-    list_gen = baum_sweet_sequence_by_generator(stop_value)
+    list_gen = baum_sweet_sequence_by_generator(stop_value, start_value)
     time_table["Generator"] = time.time() - time_start
 
     print("Value", "List", "Generator", "Binary")
-    for val in range(stop_value + 1):
-        print(val, list_seq[val], list_gen[val], bin(val)[2:])
+    for val in range(start_value, stop_value + 1):
+        print(val, list_seq[val - start_value], list_gen[val - start_value],
+              bin(val)[2:])
 
     print("Times:", time_table)
